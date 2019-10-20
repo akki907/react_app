@@ -77,7 +77,7 @@ router.get('/:id', (req, res) => {
             })
             res.json({
                 success: true,
-                message: tenant
+                data: tenant
             })
         })
         .catch(err =>

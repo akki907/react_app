@@ -1,88 +1,105 @@
-import {GET_ERRORS} from './types'
-import { SET_CURRENT_USER} from './types'
+import {
+  GET_ERRORS,
+  TENANTS,
+  TENANT,
+  LOADING,
+  CLEAR_ERRORS,
+  DELETE_TENANT
+} from './types'
 import axios from "axios";
-export const create_user = (userData,history)=> dispatch =>{
-     axios
-      .post("/api/create", userData)
-      .then(user => history.push('/login'))
-      .catch(err => {
-        dispatch({
-          type:GET_ERRORS,
-          payload:err.response.data.message
-        })
-      });
-}
-
-
-export const get_list = (history)=> dispatch =>{
+export const create_user = (userData, history) => dispatch => {
   axios
-   .get("/api/list")
-   .then(res => {
-     const token  = res.data.token
-     localStorage.setItem('jwtToken',token)
-    //@ set this to header for Header for future purpose
-    setAuthToken(token)
-    const decoded = jwt_decode(token)
-    dispatch(setCurrentUser(decoded))
-   }
-  )
-   .catch(err => {
-     dispatch({
-       type:GET_ERRORS,
-       payload:err.response.data.message
-     })
-   });
+    .post("/api/create", userData)
+    .then(user => history.push('/'))
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data.message
+      })
+    });
 }
 
-export const setCurrentUser = decoded =>{
-  return {
-    type: SET_CURRENT_USER,
-    payload:decoded
-  }
+
+export const get_list = () => dispatch => {
+  dispatch(setLoading());
+  axios
+    .get("/api/list")
+    .then(res => {
+      dispatch({
+        type: TENANTS,
+        payload: res.data.data
+      })
+    })
+    .catch(err => {
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data.message
+      })
+    });
 }
 
-export const get_by_id = (id)=>dispatch=>{
-    axios
+
+
+export const get_by_id = (id) => dispatch => {
+  dispatch(setLoading());
+  axios
     .get(`/api/${id}`)
     .then(res => {
-     dispatch(setCurrentUser(decoded))
-    }
-   )
+      dispatch({
+        type: TENANT,
+        payload: res.data.data
+      })
+    })
     .catch(err => {
       dispatch({
-        type:GET_ERRORS,
-        payload:err.response.data.message
+        type: GET_ERRORS,
+        payload: err.response.data.message
       })
     });
 }
 
 
-export const update = (id,data)=>dispatch=>{
-    axios
-    .put(`/api/${id}`,data)
+export const update_info = (data,history) => dispatch => {
+  axios
+    .put(`/api/${data.id}`, data)
     .then(res => {
-     dispatch(setCurrentUser(decoded))
-    }
-   )
+      history.push('/')
+    })
     .catch(err => {
       dispatch({
-        type:GET_ERRORS,
-        payload:err.response.data.message
+        type: GET_ERRORS,
+        payload: err.response.data.message
       })
     });
-  }
+}
 
-  export const delet_by_id = (id)=>dispatch=>{
-    axios
+export const delet_by_id = id => dispatch => {
+  axios
     .delete(`/api/${id}`)
     .then(res => {
-     dispatch(setCurrentUser(decoded))
-    }
-   )
+      dispatch({
+        type: DELETE_TENANT,
+        payload: id
+      })
+    })
     .catch(err => {
       dispatch({
-        type:GET_ERRORS,
-        payload:err.response.data.message
+        type: GET_ERRORS,
+        payload: err.response.data.message
       })
     });
-  }
+}
+
+// Set loading state
+export const setLoading = () => {
+  return {
+    type: LOADING
+  };
+};
+
+// Clear errors
+export const clearErrors = () => {
+  return {
+    type: CLEAR_ERRORS
+  };
+};

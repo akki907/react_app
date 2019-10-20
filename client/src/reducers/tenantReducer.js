@@ -1,7 +1,7 @@
 import {
     ADD_TENANT,
-    GET_TENANTS,
-    GET_TENANT,
+    TENANTS,
+    TENANT,
     DELETE_TENANT,
     LOADING
   } from '../actions/types';
@@ -19,13 +19,13 @@ import {
           ...state,
           loading: true
         };
-      case GET_TENANTS:
+      case TENANTS:
         return {
           ...state,
           tenants: action.payload,
           loading: false
         };
-      case GET_TENANT:
+      case TENANT:
         return {
           ...state,
           tenant: action.payload,
